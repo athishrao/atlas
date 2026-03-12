@@ -1,36 +1,27 @@
 {% extends "base.html" %}
-{% block title %}tn/{{ link.short }}{% endblock %}
+{% block title %}{{ app_name }} — {{ prefix }}/{{ link.short }}{% endblock %}
+{% block nav_links_active %}{% endblock %}
+
 {% block content %}
-<div class="card" style="max-width:520px;text-align:center;padding:40px">
-  <p style="color:#888;font-size:.9rem;margin-bottom:12px">{{ prefix }}/{{ link.short }}</p>
-  <h1 style="margin-bottom:8px">{{ link.description or link.short }}</h1>
-  <p id="path" style="color:#888;font-size:.85rem;margin-bottom:28px;word-break:break-all">{{ link.url }}</p>
-  <button class="btn btn-primary" onclick="copyPath()" id="copy-btn" style="font-size:1rem;padding:12px 28px">Copy path</button>
-  <p style="color:#aaa;font-size:.8rem;margin-top:20px">
-    Paste into Finder (⌘⇧G), Explorer, or a new browser tab.
-  </p>
+<div class="card file-card" style="max-width:480px">
+  <div class="file-label">{{ prefix }}/{{ link.short }}</div>
+  <h1>{{ link.description or link.short }}</h1>
+  <div class="file-path" id="filePath">{{ link.url }}</div>
+  <button class="btn btn-primary" onclick="copyPath()" id="copy-btn" style="padding:10px 24px">Copy path</button>
+  <div class="file-hint">Paste into Finder (⌘⇧G), Explorer, or a new browser tab.</div>
   <script>
     function copyPath() {
-      const text = document.getElementById('path').textContent.trim();
+      const text = document.getElementById('filePath').textContent.trim();
       const btn = document.getElementById('copy-btn');
+      const flash = () => { btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy path', 2000); };
       if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(text).then(() => flash(btn));
+        navigator.clipboard.writeText(text).then(flash);
       } else {
         const ta = document.createElement('textarea');
-        ta.value = text;
-        ta.style.position = 'fixed';
-        ta.style.opacity = '0';
-        document.body.appendChild(ta);
-        ta.focus();
-        ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
-        flash(btn);
+        ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.focus(); ta.select();
+        document.execCommand('copy'); document.body.removeChild(ta); flash();
       }
-    }
-    function flash(btn) {
-      btn.textContent = 'Copied!';
-      setTimeout(() => btn.textContent = 'Copy path', 2000);
     }
   </script>
 </div>

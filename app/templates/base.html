@@ -1,49 +1,270 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{% block title %}{{ app_name }}{% endblock %}</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: system-ui, sans-serif; background: #f5f5f5; color: #222; }
-    header { background: #1a1a2e; color: #fff; padding: 12px 24px; display: flex; align-items: center; gap: 16px; }
-    header a { color: #fff; text-decoration: none; font-weight: bold; font-size: 1.2rem; }
-    header nav { margin-left: auto; }
-    header nav a { color: #ccc; text-decoration: none; margin-left: 16px; }
-    header nav a:hover { color: #fff; }
-    main { max-width: 900px; margin: 32px auto; padding: 0 16px; }
-    .card { background: #fff; border-radius: 8px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid #eee; }
-    th { background: #f9f9f9; font-size: .85rem; color: #666; text-transform: uppercase; letter-spacing: .05em; }
-    tr:last-child td { border-bottom: none; }
-    tr:hover td { background: #fafafa; }
-    a { color: #3b82f6; text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    .btn { display: inline-block; padding: 8px 16px; border-radius: 6px; font-size: .9rem; cursor: pointer; border: none; }
-    .btn-primary { background: #3b82f6; color: #fff; }
-    .btn-primary:hover { background: #2563eb; }
-    .btn-sm { padding: 4px 10px; font-size: .8rem; }
-    .btn-danger { background: #ef4444; color: #fff; }
-    input, textarea { width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: .95rem; margin-top: 4px; }
-    label { font-size: .9rem; color: #555; display: block; margin-top: 14px; }
-    .form-actions { margin-top: 20px; display: flex; gap: 10px; }
-    .badge { display: inline-block; background: #e0f2fe; color: #0369a1; border-radius: 999px; padding: 2px 10px; font-size: .75rem; }
-    .search-bar { display: flex; gap: 8px; margin-bottom: 20px; }
-    .search-bar input { flex: 1; }
-    h1 { font-size: 1.4rem; margin-bottom: 20px; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0e0f11;
+      --surface: #16181c;
+      --surface2: #1e2128;
+      --border: #2a2d35;
+      --border2: #343840;
+      --text: #e8eaf0;
+      --muted: #7a7f8e;
+      --accent: #4ade80;
+      --accent2: #22d3ee;
+      --accent3: #f59e0b;
+      --danger: #f87171;
+      --purple: #a78bfa;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: "DM Sans", sans-serif;
+      font-size: 14px;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .shell {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      border-right: 1px solid var(--border);
+      padding: 24px 0;
+      display: flex;
+      flex-direction: column;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      background: rgba(14,15,17,0.95);
+    }
+
+    .logo { padding: 0 20px 20px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+    .logo-text { font-family: "Instrument Serif", serif; font-size: 22px; letter-spacing: -0.5px; color: var(--text); }
+    .logo-sub { font-family: "DM Mono", monospace; font-size: 10px; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; margin-top: 2px; }
+
+    .nav-section { padding: 0 12px; margin-bottom: 8px; }
+    .nav-label { font-family: "DM Mono", monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); padding: 0 8px; margin-bottom: 4px; }
+    .nav-item {
+      display: flex; align-items: center; gap: 8px; padding: 8px; border-radius: 6px;
+      cursor: pointer; color: var(--muted); font-size: 13px; font-weight: 400;
+      transition: all 0.15s; text-decoration: none; border: 1px solid transparent;
+    }
+    .nav-item:hover { background: var(--surface); color: var(--text); }
+    .nav-item.active { background: var(--surface2); color: var(--text); border-color: var(--border); }
+    .nav-icon { width: 16px; text-align: center; font-size: 14px; }
+    .nav-badge {
+      margin-left: auto; background: var(--accent); color: #000;
+      font-size: 10px; font-family: "DM Mono", monospace; font-weight: 500;
+      padding: 1px 5px; border-radius: 3px;
+    }
+
+    .sidebar-spacer { flex: 1; }
+
+    .user-block {
+      margin: 16px 12px 0; padding: 10px; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 8px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .avatar {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 600; color: #000; flex-shrink: 0;
+    }
+    .user-info { flex: 1; min-width: 0; }
+    .user-name { font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .user-role { font-size: 10px; color: var(--muted); font-family: "DM Mono", monospace; }
+
+    /* MAIN */
+    .main { padding: 32px 36px; max-width: 960px; }
+
+    /* PAGE HEADER */
+    .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+    .header-actions { display: flex; gap: 8px; }
+    .section-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 4px; }
+    .section-title { font-family: "Instrument Serif", serif; font-size: 26px; font-weight: 400; letter-spacing: -0.5px; }
+    .section-desc { color: var(--muted); font-size: 13px; }
+
+    /* BUTTONS */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px;
+      border-radius: 6px; font-size: 12px; font-weight: 500; cursor: pointer;
+      border: 1px solid; transition: all 0.15s; font-family: "DM Sans", sans-serif; text-decoration: none;
+    }
+    .btn-primary { background: var(--accent); color: #000; border-color: var(--accent); }
+    .btn-primary:hover { background: #22c55e; }
+    .btn-ghost { background: transparent; color: var(--muted); border-color: var(--border); }
+    .btn-ghost:hover { color: var(--text); border-color: var(--border2); }
+    .btn-danger { background: transparent; color: var(--danger); border-color: rgba(248,113,113,0.3); }
+    .btn-danger:hover { background: rgba(248,113,113,0.08); }
+
+    .icon-btn {
+      width: 26px; height: 26px; border-radius: 5px; border: 1px solid var(--border);
+      background: transparent; color: var(--muted); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; transition: all 0.15s;
+    }
+    .icon-btn:hover { background: var(--surface2); color: var(--text); border-color: var(--border2); }
+
+    /* FEATURE PILL */
+    .feature-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(167,139,250,0.1); border: 1px solid rgba(167,139,250,0.3);
+      color: var(--purple); font-family: "DM Mono", monospace; font-size: 10px;
+      padding: 2px 8px; border-radius: 20px; letter-spacing: 0.5px;
+      text-transform: uppercase; font-weight: 500;
+    }
+
+    /* SEARCH */
+    .search-wrap { position: relative; margin-bottom: 24px; }
+    .search-input {
+      width: 100%; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; padding: 12px 16px 12px 42px; color: var(--text);
+      font-family: "DM Mono", monospace; font-size: 14px; outline: none; transition: border-color 0.15s;
+    }
+    .search-input::placeholder { color: var(--muted); }
+    .search-input:focus { border-color: var(--accent); }
+    .search-prefix {
+      position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+      font-family: "DM Mono", monospace; font-size: 13px; color: var(--accent); pointer-events: none;
+    }
+    .search-meta { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); }
+    .kbd {
+      background: var(--surface2); border: 1px solid var(--border2); border-radius: 4px;
+      padding: 1px 6px; font-family: "DM Mono", monospace; font-size: 10px; color: var(--muted);
+    }
+
+    /* LINK TABLE */
+    .link-table { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+    .table-head {
+      display: grid; grid-template-columns: 150px 1fr 70px 120px;
+      padding: 10px 16px; background: var(--surface); border-bottom: 1px solid var(--border); gap: 12px;
+    }
+    .th { font-family: "DM Mono", monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
+    .table-row {
+      display: grid; grid-template-columns: 150px 1fr 70px 120px;
+      padding: 12px 16px; border-bottom: 1px solid var(--border);
+      gap: 12px; align-items: center; transition: background 0.1s; cursor: default;
+    }
+    .table-row:last-child { border-bottom: none; }
+    .table-row:hover { background: var(--surface); }
+    .link-name { font-family: "DM Mono", monospace; font-size: 13px; color: var(--accent); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-decoration: none; }
+    .link-name:hover { text-decoration: underline; }
+    .link-url { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-decoration: none; }
+    .link-url:hover { color: var(--text); }
+    .link-clicks { font-family: "DM Mono", monospace; font-size: 12px; color: var(--text); }
+    .row-actions { display: flex; gap: 4px; align-items: center; justify-content: flex-end; }
+
+    /* EMPTY STATE */
+    .empty-state { padding: 60px 0; text-align: center; color: var(--muted); }
+    .empty-state p { margin-bottom: 16px; }
+
+    /* INLINE FORM */
+    .new-link-form {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 20px; margin-bottom: 24px; display: none;
+    }
+    .new-link-form.open { display: block; animation: fadeIn 0.15s ease; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    .form-field label { display: block; font-family: "DM Mono", monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 6px; }
+    .form-input {
+      width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
+      padding: 9px 12px; color: var(--text); font-family: "DM Mono", monospace;
+      font-size: 13px; outline: none; transition: border-color 0.15s;
+    }
+    .form-input:focus { border-color: var(--accent); }
+    .form-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 4px; }
+
+    /* CARD (for create/edit pages) */
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 28px;
+    }
+    .card h1 { font-family: "Instrument Serif", serif; font-size: 22px; font-weight: 400; margin-bottom: 20px; }
+    .card label { display: block; font-family: "DM Mono", monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 6px; margin-top: 16px; }
+    .card label:first-of-type { margin-top: 0; }
+    .card .form-actions { justify-content: flex-start; margin-top: 24px; }
+
+    /* FILE LINK PAGE */
+    .file-card { text-align: center; padding: 48px; }
+    .file-card .file-label { color: var(--muted); font-family: "DM Mono", monospace; font-size: 11px; margin-bottom: 10px; }
+    .file-card h1 { font-family: "Instrument Serif", serif; font-size: 28px; font-weight: 400; margin-bottom: 8px; }
+    .file-card .file-path { color: var(--muted); font-family: "DM Mono", monospace; font-size: 12px; margin-bottom: 28px; word-break: break-all; }
+    .file-card .file-hint { color: var(--muted); font-size: 11px; margin-top: 16px; }
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: none; }
+    }
   </style>
 </head>
 <body>
-  <header>
-    <a href="/">{{ prefix }}/</a>
-    <nav>
-      <a href="/create">+ New link</a>
-    </nav>
-  </header>
-  <main>
-    {% block content %}{% endblock %}
-  </main>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="logo">
+        <div class="logo-text">{{ app_name }}</div>
+        <div class="logo-sub">{{ prefix }}/anywhere</div>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-label">Navigation</div>
+        <a class="nav-item {% block nav_links_active %}{% endblock %}" href="/">
+          <span class="nav-icon">⌘</span> All Links
+          {% if link_count is defined %}<span class="nav-badge">{{ link_count }}</span>{% endif %}
+        </a>
+        <a class="nav-item" href="/create">
+          <span class="nav-icon">+</span> New Link
+        </a>
+      </div>
+
+      <div class="sidebar-spacer"></div>
+
+      {% if current_user %}
+      <div class="user-block">
+        <div class="avatar">{{ current_user.split("@")[0][:2].upper() }}</div>
+        <div class="user-info">
+          <div class="user-name">{{ current_user }}</div>
+          <div class="user-role">{% if current_user in admin_list %}admin{% else %}member{% endif %}</div>
+        </div>
+      </div>
+      {% endif %}
+    </aside>
+
+    <main class="main">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
 </body>
 </html>

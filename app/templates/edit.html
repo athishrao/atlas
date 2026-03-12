@@ -1,18 +1,30 @@
 {% extends "base.html" %}
 {% block title %}{{ app_name }} — edit {{ prefix }}/{{ link.short }}{% endblock %}
+{% block nav_links_active %}{% endblock %}
+
 {% block content %}
-<div class="card" style="max-width:520px">
-  <h1>Edit {{ prefix }}/{{ link.short }}</h1>
+<div class="page-header">
+  <div>
+    <div class="section-header">
+      <span class="section-title">Edit Link</span>
+    </div>
+    <div class="section-desc">{{ prefix }}/{{ link.short }}</div>
+  </div>
+</div>
+
+<div class="card" style="max-width:560px">
   <form method="post" action="/edit/{{ link.short }}">
-    <label>Destination URL
-      <input name="url" type="text" value="{{ link.url }}" required>
-    </label>
-    <label>Description
-      <input name="description" value="{{ link.description }}">
-    </label>
-    <div class="form-actions">
-      <button class="btn btn-primary" type="submit">Save</button>
-      <a class="btn" style="background:#eee;color:#333" href="/">Cancel</a>
+    <div class="form-field" style="margin-top:0">
+      <label>Destination URL</label>
+      <input class="form-input" name="url" type="text" value="{{ link.url }}" required autofocus>
+    </div>
+    <div class="form-field">
+      <label>Description</label>
+      <input class="form-input" name="description" type="text" value="{{ link.description }}">
+    </div>
+    <div class="form-actions" style="margin-top:20px">
+      <button type="submit" class="btn btn-primary">Save</button>
+      <a class="btn btn-ghost" href="/">Cancel</a>
     </div>
   </form>
 </div>

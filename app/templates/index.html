@@ -1,43 +1,141 @@
 {% extends "base.html" %}
-{% block title %}{{ app_name }} — directory{% endblock %}
+{% block title %}{{ app_name }} — all links{% endblock %}
+{% block nav_links_active %}active{% endblock %}
+
 {% block content %}
-<div class="card">
-  <form class="search-bar" method="get" action="/">
-    <input name="q" value="{{ q }}" placeholder="Search links…" autofocus>
-    <button class="btn btn-primary" type="submit">Search</button>
+<div class="page-header">
+  <div>
+    <div class="section-header">
+      <span class="section-title">All Links</span>
+      <span class="feature-pill">✦ {{ links|length }} active</span>
+    </div>
+    <div class="section-desc">Type {{ prefix }}/<em>name</em> in your browser to navigate</div>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-primary" onclick="toggleForm()">+ New Link</button>
+  </div>
+</div>
+
+<!-- INLINE CREATE FORM -->
+<div class="new-link-form" id="newLinkForm">
+  <form method="post" action="/create">
+    <div class="form-row">
+      <div class="form-field">
+        <label>Short Name</label>
+        <input class="form-input" name="short" type="text" placeholder="standup" required pattern="[a-z0-9\-]{1,50}" id="inlineShort">
+      </div>
+      <div class="form-field">
+        <label>Destination URL</label>
+        <input class="form-input" name="url" type="text" placeholder="https://… or file:///path/to/file" required>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>Description (optional)</label>
+        <input class="form-input" name="description" type="text" placeholder="Daily standup meeting">
+      </div>
+    </div>
+    <div class="form-actions">
+      <button type="button" class="btn btn-ghost" onclick="toggleForm()">Cancel</button>
+      <button type="submit" class="btn btn-primary">Create Link</button>
+    </div>
   </form>
+</div>
+
+<!-- SEARCH -->
+<div class="search-wrap">
+  <span class="search-prefix">⌕</span>
+  <input class="search-input" id="searchInput" type="text" placeholder="Search links…" value="{{ q }}" oninput="filterLinks(this.value)" autofocus>
+  <div class="search-meta"><span class="kbd">⌘K</span></div>
+</div>
+
+<!-- LINK TABLE -->
+<div class="link-table" id="linkTable">
+  <div class="table-head">
+    <div class="th">Short Name</div>
+    <div class="th">Destination</div>
+    <div class="th">Clicks</div>
+    <div class="th" style="text-align:right">Actions</div>
+  </div>
 
   {% if links %}
-  <table>
-    <thead>
-      <tr>
-        <th>Short name</th>
-        <th>Destination</th>
-        <th>Description</th>
-        <th>Owner</th>
-        <th style="text-align:right">Clicks</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for link in links %}
-      <tr>
-        <td><a href="/{{ link.short }}">{{ prefix }}/{{ link.short }}</a></td>
-        <td style="max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
-          <a href="{{ link.url }}" target="_blank" rel="noopener">{{ link.url }}</a>
-        </td>
-        <td>{{ link.description }}</td>
-        <td><span class="badge">{{ link.owner_email }}</span></td>
-        <td style="text-align:right">{{ link.click_count }}</td>
-        <td><a class="btn btn-sm btn-primary" href="/edit/{{ link.short }}">Edit</a></td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  {% for link in links %}
+  <div class="table-row" data-short="{{ link.short }}" data-desc="{{ link.description }}" data-url="{{ link.url }}">
+    <div>
+      <a class="link-name" href="/{{ link.short }}">{{ prefix }}/{{ link.short }}</a>
+    </div>
+    <a class="link-url" href="{{ link.url }}" target="_blank" rel="noopener">{{ link.url }}</a>
+    <div class="link-clicks">{{ link.click_count }}</div>
+    <div class="row-actions">
+      <button class="icon-btn" title="Copy link" onclick="copyLink('{{ base_url }}/{{ link.short }}', this)">⎘</button>
+      <a class="icon-btn" title="Edit" href="/edit/{{ link.short }}">✎</a>
+    </div>
+  </div>
+  {% endfor %}
   {% else %}
-  <p style="color:#888;text-align:center;padding:40px 0">
-    No links found. <a href="/create">Create one?</a>
-  </p>
+  <div class="empty-state">
+    <p>No links yet.</p>
+    <button class="btn btn-primary" onclick="toggleForm()">+ Create your first link</button>
+  </div>
   {% endif %}
 </div>
+
+<div id="noResults" style="display:none; padding:40px 0; text-align:center; color:var(--muted);">
+  No links match "<span id="noResultsQuery"></span>" —
+  <a id="noResultsCreate" href="/create" style="color:var(--accent)">create it?</a>
+</div>
+
+<script>
+  function toggleForm() {
+    const f = document.getElementById('newLinkForm');
+    f.classList.toggle('open');
+    if (f.classList.contains('open')) document.getElementById('inlineShort').focus();
+  }
+
+  function filterLinks(q) {
+    const rows = document.querySelectorAll('.table-row');
+    const lower = q.toLowerCase();
+    let visible = 0;
+    rows.forEach(row => {
+      const match = row.dataset.short.includes(lower) ||
+                    (row.dataset.desc || '').toLowerCase().includes(lower) ||
+                    row.dataset.url.toLowerCase().includes(lower);
+      row.style.display = match ? '' : 'none';
+      if (match) visible++;
+    });
+    const noResults = document.getElementById('noResults');
+    const table = document.getElementById('linkTable');
+    if (q && visible === 0) {
+      noResults.style.display = 'block';
+      document.getElementById('noResultsQuery').textContent = q;
+      document.getElementById('noResultsCreate').href = '/create?short=' + encodeURIComponent(q);
+      table.style.display = 'none';
+    } else {
+      noResults.style.display = 'none';
+      table.style.display = '';
+    }
+  }
+
+  function copyLink(url, btn) {
+    const copy = () => { btn.textContent = '✓'; setTimeout(() => btn.textContent = '⎘', 1500); };
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(url).then(copy);
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = url; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.focus(); ta.select();
+      document.execCommand('copy'); document.body.removeChild(ta); copy();
+    }
+  }
+
+  document.addEventListener('keydown', e => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault(); document.getElementById('searchInput').focus();
+    }
+  });
+
+  // Apply q param filter on load
+  const initQ = document.getElementById('searchInput').value;
+  if (initQ) filterLinks(initQ);
+</script>
 {% endblock %}

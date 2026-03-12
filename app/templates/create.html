@@ -1,21 +1,36 @@
 {% extends "base.html" %}
-{% block title %}{{ app_name }} — create{% endblock %}
+{% block title %}{{ app_name }} — new link{% endblock %}
+{% block nav_links_active %}{% endblock %}
+
 {% block content %}
-<div class="card" style="max-width:520px">
-  <h1>New short link</h1>
+<div class="page-header">
+  <div>
+    <div class="section-header">
+      <span class="section-title">New Link</span>
+    </div>
+    <div class="section-desc">Create a short name that redirects anywhere</div>
+  </div>
+</div>
+
+<div class="card" style="max-width:560px">
   <form method="post" action="/create">
-    <label>Short name
-      <input name="short" value="{{ short }}" placeholder="e.g. golive" required pattern="[a-z0-9\-_]{1,50}">
-    </label>
-    <label>Destination URL
-      <input name="url" type="text" placeholder="https://… or file:///path/to/file" required>
-    </label>
-    <label>Description (optional)
-      <input name="description" placeholder="What is this link?">
-    </label>
-    <div class="form-actions">
-      <button class="btn btn-primary" type="submit">Create</button>
-      <a class="btn" style="background:#eee;color:#333" href="/">Cancel</a>
+    <div class="form-row">
+      <div class="form-field">
+        <label>Short Name</label>
+        <input class="form-input" name="short" value="{{ short }}" type="text" placeholder="standup" required pattern="[a-z0-9\-]{1,50}" autofocus>
+      </div>
+      <div class="form-field">
+        <label>Destination URL</label>
+        <input class="form-input" name="url" type="text" placeholder="https://… or file:///path/to/file" required>
+      </div>
+    </div>
+    <div class="form-field" style="margin-bottom:0">
+      <label>Description (optional)</label>
+      <input class="form-input" name="description" type="text" placeholder="What is this link?">
+    </div>
+    <div class="form-actions" style="margin-top:20px">
+      <button type="submit" class="btn btn-primary">Create Link</button>
+      <a class="btn btn-ghost" href="/">Cancel</a>
     </div>
   </form>
 </div>
