@@ -52,6 +52,24 @@ Atlas trusts the `X-Forwarded-User` header for user identity. In production, put
 
 Set `DEBUG=true` to skip auth entirely — suitable for a trusted internal network or local use.
 
+## Bundles
+
+Bundles group related links under a single short name. Visiting `atlas/onboarding` opens a landing page listing every link in the bundle — useful for checklists, project toolkits, or any set of links you share together.
+
+**Example:** a bundle called `onboarding` might contain `handbook`, `jira`, `slack`, and `vpn`. Share `atlas/onboarding` with a new hire and they get all four in one place.
+
+### Creating a bundle
+
+1. Go to **Bundles** in the sidebar → **+ New Bundle**
+2. Give it a short name (same rules as links — lowercase, alphanumeric, hyphens)
+3. Add a display name, optional description, icon, and colour
+4. Type link short names into the link selector to add them to the bundle
+5. Save - the bundle is immediately available at `atlas/<short>`
+
+### Bundle landing page
+
+Visiting a bundle short name shows a card for each link in the bundle with its name, URL, and a direct link. Visit counts are tracked separately from individual link click counts.
+
 ## Browser Extension (Chrome)
 
 The extension lets you search links and create new ones from any tab, without opening the Atlas UI. It also adds omnibox support so you can navigate by typing `go <shortname>` directly in the address bar.
@@ -90,6 +108,66 @@ go dep            → shows autocomplete suggestions matching "dep"
 ```
 
 Press `Enter` to open in the current tab, or `Alt+Enter` for a new tab.
+
+## Import / Export
+
+Atlas can export all your links and bundles to a file and restore them from it. Find this under **Import / Export** in the sidebar.
+
+### Formats
+
+**JSON** — full fidelity, includes links and bundles. Use this for backups, migrations, or moving data between Atlas instances.
+
+```json
+{
+  "version": 1,
+  "exported_at": "2025-01-15T10:30:00+00:00",
+  "links": [
+    { "short": "gh", "url": "https://github.com/org", "description": "GitHub" }
+  ],
+  "bundles": [
+    {
+      "short": "dev",
+      "name": "Dev Tools",
+      "description": "Daily tools",
+      "icon": "🛠️",
+      "color": "cyan",
+      "link_shorts": ["gh", "jira", "figma"]
+    }
+  ]
+}
+```
+
+**CSV** — good for bulk editing in a spreadsheet. The file has two sections separated by a blank line: `# LINKS` followed by `# BUNDLES`. Bundle link lists are stored as pipe-separated values in the `link_shorts` column.
+
+```
+# LINKS
+short,url,description
+gh,https://github.com/org,GitHub
+jira,https://jira.company.com,Jira
+
+# BUNDLES
+short,name,description,icon,color,link_shorts
+dev,Dev Tools,Daily tools,🛠️,cyan,gh|jira
+```
+
+### Exporting
+
+Click **Export JSON** or **Export CSV** on the Import / Export page. The file downloads immediately with a timestamped filename (`atlas-export-YYYYMMDD-HHMMSS`).
+
+### Importing
+
+1. Go to **Import / Export** in the sidebar
+2. Drop a `.json` or `.csv` file onto the upload area (or click to browse)
+3. Choose a conflict strategy:
+   - **Skip** — leave existing links and bundles untouched if their short name already exists
+   - **Overwrite** — update the URL, description, and bundle contents of any existing entries
+4. Click **Import** — a result banner shows how many entries were added, skipped, or errored
+
+Imports are atomic per-format: if the file cannot be parsed at all, nothing is written. Individual rows that are missing required fields (short name or URL) are counted as errors but do not abort the rest of the import.
+
+> **Tip:** To migrate between instances, export JSON from the old instance, spin up the new one, and import the file. All links and bundles are restored with their original short names.
+
+Bundles are included in JSON exports and restored on import. CSV exports also include bundles, with their link list stored as a pipe-separated value in the `link_shorts` column.
 
 ## Development
 
