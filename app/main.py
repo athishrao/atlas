@@ -2,8 +2,11 @@ from fastapi import FastAPI
 from app.config import settings
 from app.database import Base, engine
 from app import models  # noqa: ensure models are registered
+from app.routes import links
 
 app = FastAPI(title="tn-links", debug=settings.debug)
+
+app.include_router(links.router)
 
 @app.on_event("startup")
 def startup():
