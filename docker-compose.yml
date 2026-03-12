@@ -1,0 +1,12 @@
+services:
+  app:
+    build: .
+    ports:
+      - "80:10710"
+    environment:
+      - DATABASE_URL=sqlite:///./data/tnlinks.db
+      - TNLINKS_ADMINS=${TNLINKS_ADMINS:-}
+      - DEBUG=false
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
