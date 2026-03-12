@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}tn-links — directory{% endblock %}
+{% block content %}
+<div class="card">
+  <form class="search-bar" method="get" action="/">
+    <input name="q" value="{{ q }}" placeholder="Search links…" autofocus>
+    <button class="btn btn-primary" type="submit">Search</button>
+  </form>
+
+  {% if links %}
+  <table>
+    <thead>
+      <tr>
+        <th>Short name</th>
+        <th>Destination</th>
+        <th>Description</th>
+        <th>Owner</th>
+        <th style="text-align:right">Clicks</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for link in links %}
+      <tr>
+        <td><a href="/{{ link.short }}">tn/{{ link.short }}</a></td>
+        <td style="max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+          <a href="{{ link.url }}" target="_blank" rel="noopener">{{ link.url }}</a>
+        </td>
+        <td>{{ link.description }}</td>
+        <td><span class="badge">{{ link.owner_email }}</span></td>
+        <td style="text-align:right">{{ link.click_count }}</td>
+        <td><a class="btn btn-sm btn-primary" href="/edit/{{ link.short }}">Edit</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p style="color:#888;text-align:center;padding:40px 0">
+    No links found. <a href="/create">Create one?</a>
+  </p>
+  {% endif %}
+</div>
+{% endblock %}

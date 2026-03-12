@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}tn-links — create{% endblock %}
+{% block content %}
+<div class="card" style="max-width:520px">
+  <h1>New short link</h1>
+  <form method="post" action="/create">
+    <label>Short name
+      <input name="short" value="{{ short }}" placeholder="e.g. slack" required pattern="[a-z0-9\-]{1,50}">
+    </label>
+    <label>Destination URL
+      <input name="url" type="url" placeholder="https://…" required>
+    </label>
+    <label>Description (optional)
+      <input name="description" placeholder="What is this link?">
+    </label>
+    <div class="form-actions">
+      <button class="btn btn-primary" type="submit">Create</button>
+      <a class="btn" style="background:#eee;color:#333" href="/">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
