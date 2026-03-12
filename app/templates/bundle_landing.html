@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}{{ app_name }} — {{ bundle.short }}{% endblock %}
+{% block nav_bundles_active %}active{% endblock %}
+
+{% block content %}
+<div style="margin-bottom:32px">
+  <div style="font-size:48px;margin-bottom:12px">{{ bundle.icon }}</div>
+  <div class="section-header">
+    <span class="section-title">{{ bundle.name }}</span>
+    <span class="feature-pill">{{ bundle.items|length }} links</span>
+  </div>
+  {% if bundle.description %}
+  <div class="section-desc" style="margin-top:6px">{{ bundle.description }}</div>
+  {% endif %}
+</div>
+
+<div class="bundle-landing-grid">
+  {% for item in bundle.items %}
+  {% set lnk = all_links.get(item.link_short) %}
+  {% if lnk %}
+  <a class="bundle-landing-card" href="/{{ lnk.short }}">
+    <div class="blc-short">{{ prefix }}/{{ lnk.short }}</div>
+    <div class="blc-desc">{{ lnk.description or lnk.short }}</div>
+    <div class="blc-url">{{ lnk.url[:60] }}{% if lnk.url|length > 60 %}…{% endif %}</div>
+    <div class="blc-arrow">→</div>
+  </a>
+  {% else %}
+  <div class="bundle-landing-card" style="opacity:.4;cursor:default">
+    <div class="blc-short">{{ item.link_short }}</div>
+    <div class="blc-desc" style="color:var(--danger)">Link not found</div>
+    <div class="blc-url">—</div>
+  </div>
+  {% endif %}
+  {% endfor %}
+</div>
+
+<div style="margin-top:32px;padding-top:20px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+  <span style="color:var(--muted);font-size:12px;font-family:'DM Mono',monospace">
+    {{ prefix }}/{{ bundle.short }} · {{ bundle.visit_count }} visit{{ 's' if bundle.visit_count != 1 }}
+  </span>
+  <a class="btn btn-ghost" href="/bundles/edit/{{ bundle.short }}" style="font-size:11px">✎ Edit bundle</a>
+</div>
+
+<style>
+.bundle-landing-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px; }
+.bundle-landing-card {
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  padding:16px 18px;text-decoration:none;color:var(--text);
+  transition:all .2s;position:relative;overflow:hidden;display:block;
+}
+.bundle-landing-card::before {
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:var(--accent);opacity:0;transition:opacity .15s;
+}
+.bundle-landing-card:hover { border-color:var(--border2);transform:translateY(-1px); }
+.bundle-landing-card:hover::before { opacity:1; }
+.blc-short { font-family:'DM Mono',monospace;font-size:13px;color:var(--accent);font-weight:500;margin-bottom:6px; }
+.blc-desc { font-size:13px;font-weight:500;margin-bottom:4px; }
+.blc-url { font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:10px; }
+.blc-arrow { font-size:18px;color:var(--muted);transition:color .15s;text-align:right; }
+.bundle-landing-card:hover .blc-arrow { color:var(--accent); }
+</style>
+{% endblock %}

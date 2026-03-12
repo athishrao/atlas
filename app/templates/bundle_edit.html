@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}{{ app_name }} — edit bundle {{ bundle.short }}{% endblock %}
+{% block nav_bundles_active %}active{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <div class="section-header"><span class="section-title">Edit Bundle</span></div>
+    <div class="section-desc">{{ prefix }}/{{ bundle.short }}</div>
+  </div>
+</div>
+
+<div class="card" style="max-width:620px">
+  <form method="post" action="/bundles/edit/{{ bundle.short }}">
+    <div class="form-row">
+      <div class="form-field">
+        <label>Display Name</label>
+        <input class="form-input" name="name" type="text" value="{{ bundle.name }}" required autofocus>
+      </div>
+      <div class="form-field">
+        <label>Icon (emoji)</label>
+        <input class="form-input" name="icon" type="text" value="{{ bundle.icon }}" maxlength="4" style="font-size:20px">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>Description</label>
+        <input class="form-input" name="description" type="text" value="{{ bundle.description }}">
+      </div>
+      <div class="form-field">
+        <label>Color Theme</label>
+        <select class="form-input" name="color">
+          <option value="default" {% if bundle.color == 'default' %}selected{% endif %}>Green (default)</option>
+          <option value="cyan"    {% if bundle.color == 'cyan'    %}selected{% endif %}>Cyan</option>
+          <option value="amber"   {% if bundle.color == 'amber'   %}selected{% endif %}>Amber</option>
+          <option value="purple"  {% if bundle.color == 'purple'  %}selected{% endif %}>Purple</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-field">
+      <label>Links — short names, comma-separated</label>
+      <input class="form-input" name="link_shorts" id="linkShortsInput" type="text"
+             value="{{ current_shorts | join(', ') }}" placeholder="handbook, standup, deploy">
+      <div id="linkPreview" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px"></div>
+    </div>
+    <div style="margin-top:8px">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px">Or pick from existing links</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;max-height:120px;overflow-y:auto">
+        {% for link in all_links %}
+        <button type="button" class="link-chip {% if link.short in current_shorts %}selected{% endif %}"
+                data-short="{{ link.short }}" onclick="addLink('{{ link.short }}')" title="{{ link.url }}">{{ link.short }}</button>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="form-actions" style="margin-top:24px">
+      <button type="submit" class="btn btn-primary">Save</button>
+      <a class="btn btn-ghost" href="/bundles">Cancel</a>
+    </div>
+  </form>
+</div>
+
+<style>
+.link-chip {
+  display:inline-flex;align-items:center;padding:3px 10px;border-radius:4px;
+  font-size:11px;font-family:'DM Mono',monospace;cursor:pointer;
+  background:var(--surface2);border:1px solid var(--border2);color:var(--muted);transition:all .15s;
+}
+.link-chip:hover,.link-chip.selected { background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.4);color:var(--accent); }
+.link-tag {
+  display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:4px;
+  font-size:11px;font-family:'DM Mono',monospace;
+  background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.3);color:var(--accent);
+}
+.link-tag button { background:none;border:none;color:var(--muted);cursor:pointer;padding:0;font-size:10px;line-height:1; }
+.link-tag button:hover { color:var(--danger); }
+</style>
+
+<script>
+let selectedLinks = {{ current_shorts | tojson }};
+
+function renderPreview() {
+  const preview = document.getElementById('linkPreview');
+  preview.innerHTML = selectedLinks.map(s =>
+    `<span class="link-tag">${s} <button onclick="removeLink('${s}')" type="button">✕</button></span>`
+  ).join('');
+  document.getElementById('linkShortsInput').value = selectedLinks.join(', ');
+  document.querySelectorAll('.link-chip').forEach(c => {
+    c.classList.toggle('selected', selectedLinks.includes(c.dataset.short));
+  });
+}
+
+function addLink(short) {
+  if (!selectedLinks.includes(short)) { selectedLinks.push(short); renderPreview(); }
+  else { removeLink(short); }
+}
+
+function removeLink(short) {
+  selectedLinks = selectedLinks.filter(s => s !== short); renderPreview();
+}
+
+document.getElementById('linkShortsInput').addEventListener('input', function() {
+  selectedLinks = this.value.split(',').map(s => s.trim()).filter(Boolean);
+  document.querySelectorAll('.link-chip').forEach(c => {
+    c.classList.toggle('selected', selectedLinks.includes(c.dataset.short));
+  });
+});
+
+renderPreview();
+</script>
+{% endblock %}

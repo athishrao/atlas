@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}{{ app_name }} — bundles{% endblock %}
+{% block nav_bundles_active %}active{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <div class="section-header">
+      <span class="section-title">Bundles</span>
+      <span class="feature-pill">✦ {{ bundles|length }} bundles</span>
+    </div>
+    <div class="section-desc">Group related links — one short name opens a landing page with all of them</div>
+  </div>
+  <div class="header-actions">
+    <a class="btn btn-primary" href="/bundles/create">+ New Bundle</a>
+  </div>
+</div>
+
+{% if bundles %}
+<div class="bundles-grid">
+  {% for bundle in bundles %}
+  {% set item_count = bundle.items|length %}
+  <div class="bundle-card {{ bundle.color }}">
+    <div class="bundle-icon">{{ bundle.icon }}</div>
+    <div class="bundle-name">
+      <a href="/{{ bundle.short }}" style="color:inherit;text-decoration:none;">{{ bundle.short }}</a>
+    </div>
+    <div class="bundle-desc">{{ bundle.description }}</div>
+    <div class="bundle-links">
+      {% for item in bundle.items[:3] %}
+      {% set lnk = all_links.get(item.link_short) %}
+      <div class="bundle-link-item">
+        <span class="bundle-link-name">{{ item.link_short }}</span>
+        <span class="bundle-arrow">→</span>
+        <span class="bundle-link-url">{% if lnk %}{{ lnk.url[:40] }}{% if lnk.url|length > 40 %}…{% endif %}{% else %}<em style="color:var(--danger)">missing</em>{% endif %}</span>
+      </div>
+      {% endfor %}
+      {% if item_count > 3 %}
+      <div style="color:var(--muted);font-size:11px;font-family:monospace;padding-top:2px">+{{ item_count - 3 }} more…</div>
+      {% endif %}
+    </div>
+    <div class="bundle-footer">
+      <span class="bundle-count">{{ item_count }} link{{ 's' if item_count != 1 }} · {{ bundle.visit_count }} visit{{ 's' if bundle.visit_count != 1 }}</span>
+      <div style="display:flex;gap:6px">
+        <a class="icon-btn" title="Edit" href="/bundles/edit/{{ bundle.short }}">✎</a>
+        <button class="icon-btn" title="Copy link" onclick="copyBundleLink('{{ base_url }}/{{ bundle.short }}', this)">⎘</button>
+        <form method="post" action="/bundles/delete/{{ bundle.short }}" style="display:inline" onsubmit="return confirm('Delete bundle {{ bundle.short }}?')">
+          <button class="icon-btn" title="Delete" style="color:var(--danger)">✕</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state" style="padding:80px 0">
+  <div style="font-size:48px;margin-bottom:16px">▦</div>
+  <p>No bundles yet.</p>
+  <a class="btn btn-primary" href="/bundles/create">+ Create your first bundle</a>
+</div>
+{% endif %}
+
+<script>
+function copyBundleLink(url, btn) {
+  const copy = () => { btn.textContent = '✓'; setTimeout(() => btn.textContent = '⎘', 1500); };
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(url).then(copy);
+  } else {
+    const ta = document.createElement('textarea');
+    ta.value = url; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta); copy();
+  }
+}
+</script>
+{% endblock %}
