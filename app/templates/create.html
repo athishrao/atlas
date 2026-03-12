@@ -13,6 +13,11 @@
 </div>
 
 <div class="card" style="max-width:560px">
+  {% if error %}
+  <div style="margin-bottom:16px;padding:10px 14px;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.25);border-radius:8px;color:var(--danger);font-size:13px">
+    {{ error }}
+  </div>
+  {% endif %}
   <form method="post" action="/create">
     <div class="form-row">
       <div class="form-field">
@@ -21,12 +26,12 @@
       </div>
       <div class="form-field">
         <label>Destination URL</label>
-        <input class="form-input" name="url" type="text" placeholder="https://… or file:///path/to/file" required>
+        <input class="form-input" name="url" value="{{ url or '' }}" type="text" placeholder="https://… or file:///path/to/file" required>
       </div>
     </div>
     <div class="form-field" style="margin-bottom:0">
       <label>Description (optional)</label>
-      <input class="form-input" name="description" type="text" placeholder="What is this link?">
+      <input class="form-input" name="description" value="{{ description or '' }}" type="text" placeholder="What is this link?">
     </div>
     <div class="form-actions" style="margin-top:20px">
       <button type="submit" class="btn btn-primary">Create Link</button>

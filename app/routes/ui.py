@@ -41,6 +41,16 @@ def create_submit(
     db: Session = Depends(get_db)
 ):
     short = short.lower()
+    if db.query(models.Link).filter_by(short=short).first():
+        return templates.TemplateResponse("create.html", {
+            "request": request,
+            "short": short,
+            "url": url,
+            "description": description,
+            "error": f"'{short}' is already taken.",
+            "current_user": user,
+            "admin_list": settings.admin_list,
+        }, status_code=409)
     link = models.Link(short=short, url=url, description=description, owner_email=user)
     db.add(link)
     db.commit()
