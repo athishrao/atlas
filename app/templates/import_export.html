@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+{% block title %}{{ app_name }} — Import / Export{% endblock %}
+{% block nav_data_active %}active{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <div class="section-header">
+      <span class="section-title">Import / Export</span>
+    </div>
+    <div class="section-desc">Back up your links and bundles, or restore from a previous export.</div>
+  </div>
+</div>
+
+{% if show_result %}
+<div class="ie-banner {% if errors and not imported and not skipped %}ie-banner-err{% elif errors %}ie-banner-warn{% else %}ie-banner-ok{% endif %}">
+  <span class="ie-banner-icon">{% if errors and not imported and not skipped %}✕{% elif errors %}⚠{% else %}✓{% endif %}</span>
+  <span>Import complete —</span>
+  {% if imported %}<strong>{{ imported }} added/updated</strong>{% endif %}
+  {% if skipped %}<span style="color:var(--muted)">{{ skipped }} skipped</span>{% endif %}
+  {% if errors %}<span style="color:var(--danger)">{{ errors }} error{{ 's' if errors != 1 }}</span>{% endif %}
+</div>
+{% endif %}
+
+<div class="ie-grid">
+
+  <!-- ── Export ── -->
+  <div class="card ie-export-card">
+    <h1>Export</h1>
+    <p class="ie-desc">
+      Download all your data as a portable file.
+      Use <strong style="color:var(--text)">JSON</strong> for full fidelity — includes links and bundles, re-importable.
+      Use <strong style="color:var(--text)">CSV</strong> for spreadsheet editing — same structure, pipe-separated bundle links.
+    </p>
+
+    <div class="ie-stats">
+      <div class="ie-stat">
+        <span class="ie-stat-num">{{ link_count }}</span>
+        <span class="ie-stat-label">link{{ 's' if link_count != 1 }}</span>
+      </div>
+      <div class="ie-stat-sep">·</div>
+      <div class="ie-stat">
+        <span class="ie-stat-num">{{ bundle_count }}</span>
+        <span class="ie-stat-label">bundle{{ 's' if bundle_count != 1 }}</span>
+      </div>
+    </div>
+
+    <div class="ie-export-btns">
+      <a href="/export/json" class="btn btn-primary ie-export-btn">
+        <span>↓</span> Export JSON
+        <span class="ie-btn-hint">links + bundles</span>
+      </a>
+      <a href="/export/csv" class="btn btn-ghost ie-export-btn">
+        <span>↓</span> Export CSV
+        <span class="ie-btn-hint">links + bundles</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── Import ── -->
+  <div class="card">
+    <h1>Import</h1>
+    <form action="/import" method="post" enctype="multipart/form-data">
+
+      <label>File</label>
+      <div class="file-drop" id="fileDrop">
+        <input type="file" name="file" id="fileInput" accept=".json,.csv" required>
+        <div class="file-drop-body">
+          <div class="file-drop-icon" id="dropIcon">📂</div>
+          <div class="file-drop-text" id="dropText">Drop file here or <span class="file-drop-cta">browse</span></div>
+          <div class="file-drop-hint">.json &nbsp;·&nbsp; .csv</div>
+        </div>
+      </div>
+
+      <label style="margin-top:20px">On conflict</label>
+      <div class="ie-radio-group">
+        <label class="ie-radio">
+          <input type="radio" name="overwrite" value="skip" checked>
+          <div class="ie-radio-body">
+            <span class="ie-radio-title">Skip</span>
+            <span class="ie-radio-desc">Leave existing links and bundles unchanged</span>
+          </div>
+        </label>
+        <label class="ie-radio">
+          <input type="radio" name="overwrite" value="overwrite">
+          <div class="ie-radio-body">
+            <span class="ie-radio-title">Overwrite</span>
+            <span class="ie-radio-desc">Update URL, description and bundle contents of existing entries</span>
+          </div>
+        </label>
+      </div>
+
+      <div class="form-actions" style="margin-top:20px">
+        <button type="submit" class="btn btn-primary">↑ Import</button>
+      </div>
+    </form>
+  </div>
+
+</div><!-- .ie-grid -->
+
+<style>
+.ie-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+/* Banner */
+.ie-banner {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 16px; border-radius: 8px; margin-bottom: 20px;
+  font-size: 13px; border: 1px solid;
+}
+.ie-banner-ok   { background: rgba(74,222,128,0.07); border-color: rgba(74,222,128,0.25); color: var(--accent); }
+.ie-banner-warn { background: rgba(245,158,11,0.07); border-color: rgba(245,158,11,0.25); color: var(--accent3); }
+.ie-banner-err  { background: rgba(248,113,113,0.07); border-color: rgba(248,113,113,0.25); color: var(--danger); }
+.ie-banner-icon { font-weight: 700; font-size: 14px; }
+
+/* Export card */
+.ie-export-card { display: flex; flex-direction: column; }
+.ie-desc { color: var(--muted); font-size: 12.5px; line-height: 1.6; margin-bottom: 20px; }
+
+.ie-stats {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 14px; background: var(--bg);
+  border: 1px solid var(--border); border-radius: 8px;
+  margin-bottom: 20px;
+}
+.ie-stat { display: flex; align-items: baseline; gap: 5px; }
+.ie-stat-num { font-family: "DM Mono", monospace; font-size: 20px; font-weight: 500; color: var(--text); }
+.ie-stat-label { font-size: 12px; color: var(--muted); }
+.ie-stat-sep { color: var(--border2); }
+
+.ie-export-btns { display: flex; flex-direction: column; gap: 8px; margin-top: auto; }
+.ie-export-btn {
+  justify-content: space-between !important;
+  width: 100%;
+}
+.ie-btn-hint {
+  font-family: "DM Mono", monospace; font-size: 9px;
+  text-transform: uppercase; letter-spacing: 1px;
+  opacity: 0.6; margin-left: auto;
+}
+
+/* File drop */
+.file-drop {
+  position: relative; margin-top: 6px;
+  border: 1px dashed var(--border2); border-radius: 8px;
+  cursor: pointer; transition: all 0.15s; overflow: hidden;
+}
+.file-drop:hover, .file-drop.drag { border-color: var(--accent); background: rgba(74,222,128,0.04); }
+.file-drop input[type="file"] {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  opacity: 0; cursor: pointer; z-index: 1;
+}
+.file-drop-body {
+  padding: 28px 16px; text-align: center; pointer-events: none;
+}
+.file-drop-icon { font-size: 26px; margin-bottom: 8px; line-height: 1; }
+.file-drop-text { font-size: 13px; color: var(--muted); }
+.file-drop-cta  { color: var(--accent); }
+.file-drop-hint {
+  font-family: "DM Mono", monospace; font-size: 10px;
+  color: var(--muted); margin-top: 5px; opacity: 0.7;
+}
+.file-drop.has-file { border-style: solid; border-color: var(--accent); background: rgba(74,222,128,0.04); }
+.file-drop.has-file .file-drop-icon { font-size: 18px; }
+.file-drop.has-file .file-drop-text { color: var(--accent); font-weight: 500; }
+
+/* Radio group */
+.ie-radio-group { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.ie-radio {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 12px; border-radius: 8px;
+  border: 1px solid var(--border); cursor: pointer; transition: all 0.15s;
+}
+.ie-radio:has(input:checked) {
+  border-color: var(--accent); background: rgba(74,222,128,0.05);
+}
+.ie-radio input[type="radio"] {
+  margin-top: 2px; accent-color: var(--accent); flex-shrink: 0;
+}
+.ie-radio-body { display: flex; flex-direction: column; gap: 2px; }
+.ie-radio-title { font-size: 13px; font-weight: 500; color: var(--text); }
+.ie-radio-desc  { font-size: 11px; color: var(--muted); line-height: 1.4; }
+
+@media (max-width: 680px) {
+  .ie-grid { grid-template-columns: 1fr; }
+}
+</style>
+
+<script>
+(function () {
+  const drop = document.getElementById('fileDrop');
+  const input = document.getElementById('fileInput');
+  const icon  = document.getElementById('dropIcon');
+  const text  = document.getElementById('dropText');
+
+  function setFile(name) {
+    drop.classList.add('has-file');
+    icon.textContent = name.endsWith('.json') ? '{}' : '📄';
+    text.textContent = name;
+  }
+
+  input.addEventListener('change', () => {
+    if (input.files[0]) setFile(input.files[0].name);
+  });
+
+  drop.addEventListener('dragover',  e => { e.preventDefault(); drop.classList.add('drag'); });
+  drop.addEventListener('dragleave', () => drop.classList.remove('drag'));
+  drop.addEventListener('drop', e => {
+    e.preventDefault(); drop.classList.remove('drag');
+    const f = e.dataTransfer.files[0];
+    if (!f) return;
+    try {
+      const dt = new DataTransfer();
+      dt.items.add(f);
+      input.files = dt.files;
+    } catch (_) {}
+    setFile(f.name);
+  });
+}());
+</script>
+{% endblock %}

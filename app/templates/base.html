@@ -103,7 +103,7 @@
     .user-role { font-size: 10px; color: var(--muted); font-family: "DM Mono", monospace; }
 
     /* MAIN */
-    .main { padding: 32px 36px; max-width: 960px; }
+    .main { padding: 32px 36px; width: 100%; min-width: 0; }
 
     /* PAGE HEADER */
     .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
@@ -164,12 +164,12 @@
     /* LINK TABLE */
     .link-table { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
     .table-head {
-      display: grid; grid-template-columns: 150px 1fr 70px 120px;
+      display: grid; grid-template-columns: 180px 1fr 80px 140px;
       padding: 10px 16px; background: var(--surface); border-bottom: 1px solid var(--border); gap: 12px;
     }
     .th { font-family: "DM Mono", monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
     .table-row {
-      display: grid; grid-template-columns: 150px 1fr 70px 120px;
+      display: grid; grid-template-columns: 180px 1fr 80px 140px;
       padding: 12px 16px; border-bottom: 1px solid var(--border);
       gap: 12px; align-items: center; transition: background 0.1s; cursor: default;
     }
@@ -288,6 +288,9 @@
         </a>
         <a class="nav-item {% block nav_bundles_active %}{% endblock %}" href="/bundles">
           <span class="nav-icon">▦</span> Bundles
+        </a>
+        <a class="nav-item {% block nav_data_active %}{% endblock %}" href="/import-export">
+          <span class="nav-icon">⇅</span> Import / Export
         </a>
         <a class="nav-item" href="/create">
           <span class="nav-icon">+</span> New Link
