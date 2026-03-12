@@ -56,6 +56,16 @@ def create_submit(
     db.commit()
     return RedirectResponse(url="/", status_code=303)
 
+@router.post("/delete/{short}")
+def delete_link(short: str, user: str = Depends(get_current_user), db: Session = Depends(get_db)):
+    link = db.query(models.Link).filter_by(short=short).first()
+    if not link:
+        return RedirectResponse(url="/", status_code=303)
+    require_owner_or_admin(user, link.owner_email)
+    db.delete(link)
+    db.commit()
+    return RedirectResponse(url="/", status_code=303)
+
 @router.get("/edit/{short}")
 def edit_form(short: str, request: Request, user: str = Depends(get_current_user), db: Session = Depends(get_db)):
     link = db.query(models.Link).filter_by(short=short).first()

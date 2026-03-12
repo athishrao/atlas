@@ -69,6 +69,11 @@
     <div class="row-actions">
       <button class="icon-btn" title="Copy link" onclick="copyLink('{{ base_url }}/{{ link.short }}', this)">⎘</button>
       <a class="icon-btn" title="Edit" href="/edit/{{ link.short }}">✎</a>
+      {% if current_user and (current_user == link.owner_email or current_user in admin_list) %}
+      <form method="post" action="/delete/{{ link.short }}" style="display:inline" onsubmit="return confirm('Delete {{ link.short }}?')">
+        <button class="icon-btn" title="Delete" style="color:var(--danger)">✕</button>
+      </form>
+      {% endif %}
     </div>
   </div>
   {% endfor %}
