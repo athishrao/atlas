@@ -12,7 +12,7 @@ templates = Jinja2Templates(directory="app/templates")
 def redirect(short: str, request: Request, db: Session = Depends(get_db)):
     link = db.query(models.Link).filter_by(short=short.lower()).first()
     if not link:
-        return templates.TemplateResponse("404.html", {"request": request, "short": short}, status_code=404)
+        return RedirectResponse(url=f"/?q={short.lower()}", status_code=302)
     link.click_count += 1
     db.commit()
     if link.url.startswith("file://"):
