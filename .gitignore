@@ -12,3 +12,5 @@ venv/
 
 # Misc
 .DS_Store
+.claude
+plan.md
