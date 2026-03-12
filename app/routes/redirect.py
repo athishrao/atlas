@@ -1,12 +1,11 @@
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import RedirectResponse
-from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from app import models
 from app.database import get_db
+from app.templating import templates
 
 router = APIRouter(tags=["redirect"])
-templates = Jinja2Templates(directory="app/templates")
 
 @router.get("/{short}")
 def redirect(short: str, request: Request, db: Session = Depends(get_db)):

@@ -4,8 +4,10 @@ services:
     ports:
       - "80:10710"
     environment:
-      - DATABASE_URL=sqlite:///./data/tnlinks.db
-      - TNLINKS_ADMINS=${TNLINKS_ADMINS:-}
+      - APP_NAME=atlas
+      - BASE_URL=http://atlas
+      - DATABASE_URL=sqlite:///./data/atlas.db
+      - ATLAS_ADMINS=${ATLAS_ADMINS:-}
       - DEBUG=true
     volumes:
       - ./data:/app/data

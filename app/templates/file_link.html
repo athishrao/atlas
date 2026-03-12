@@ -2,7 +2,7 @@
 {% block title %}tn/{{ link.short }}{% endblock %}
 {% block content %}
 <div class="card" style="max-width:520px;text-align:center;padding:40px">
-  <p style="color:#888;font-size:.9rem;margin-bottom:12px">tn/{{ link.short }}</p>
+  <p style="color:#888;font-size:.9rem;margin-bottom:12px">{{ prefix }}/{{ link.short }}</p>
   <h1 style="margin-bottom:8px">{{ link.description or link.short }}</h1>
   <p id="path" style="color:#888;font-size:.85rem;margin-bottom:28px;word-break:break-all">{{ link.url }}</p>
   <button class="btn btn-primary" onclick="copyPath()" id="copy-btn" style="font-size:1rem;padding:12px 28px">Copy path</button>

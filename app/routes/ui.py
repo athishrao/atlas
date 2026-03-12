@@ -1,14 +1,13 @@
 import re
 from fastapi import APIRouter, Depends, Form, Request
 from fastapi.responses import RedirectResponse
-from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from app import models, schemas
 from app.auth import get_current_user, require_owner_or_admin
 from app.database import get_db
+from app.templating import templates
 
 router = APIRouter(tags=["ui"])
-templates = Jinja2Templates(directory="app/templates")
 
 @router.get("/")
 def index(request: Request, q: str = "", db: Session = Depends(get_db)):

@@ -4,7 +4,7 @@ from app.database import Base, engine
 from app import models  # noqa: ensure models are registered
 from app.routes import links, ui, redirect
 
-app = FastAPI(title="tn-links", debug=settings.debug)
+app = FastAPI(title=settings.app_name, debug=settings.debug)
 
 app.include_router(links.router)
 app.include_router(ui.router)

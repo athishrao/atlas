@@ -1,8 +1,8 @@
 {% extends "base.html" %}
-{% block title %}tn-links — edit tn/{{ link.short }}{% endblock %}
+{% block title %}{{ app_name }} — edit {{ prefix }}/{{ link.short }}{% endblock %}
 {% block content %}
 <div class="card" style="max-width:520px">
-  <h1>Edit tn/{{ link.short }}</h1>
+  <h1>Edit {{ prefix }}/{{ link.short }}</h1>
   <form method="post" action="/edit/{{ link.short }}">
     <label>Destination URL
       <input name="url" type="text" value="{{ link.url }}" required>

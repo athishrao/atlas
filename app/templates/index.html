@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}tn-links — directory{% endblock %}
+{% block title %}{{ app_name }} — directory{% endblock %}
 {% block content %}
 <div class="card">
   <form class="search-bar" method="get" action="/">
@@ -22,7 +22,7 @@
     <tbody>
       {% for link in links %}
       <tr>
-        <td><a href="/{{ link.short }}">tn/{{ link.short }}</a></td>
+        <td><a href="/{{ link.short }}">{{ prefix }}/{{ link.short }}</a></td>
         <td style="max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
           <a href="{{ link.url }}" target="_blank" rel="noopener">{{ link.url }}</a>
         </td>
