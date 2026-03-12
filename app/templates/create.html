@@ -5,7 +5,7 @@
   <h1>New short link</h1>
   <form method="post" action="/create">
     <label>Short name
-      <input name="short" value="{{ short }}" placeholder="e.g. slack" required pattern="[a-z0-9\-]{1,50}">
+      <input name="short" value="{{ short }}" placeholder="e.g. golive" required pattern="[a-z0-9\-_]{1,50}">
     </label>
     <label>Destination URL
       <input name="url" type="url" placeholder="https://…" required>
