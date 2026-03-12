@@ -4,7 +4,7 @@ class Settings(BaseSettings):
     database_url: str = "sqlite:///./atlas.db"
     atlas_admins: str = ""
     auth_header: str = "X-Forwarded-User"
-    base_url: str = "http://tn"
+    base_url: str = "http://atlas"
     app_name: str = "atlas"
     debug: bool = False
 
@@ -14,7 +14,7 @@ class Settings(BaseSettings):
 
     @property
     def prefix(self) -> str:
-        """Display prefix from base_url, e.g. 'http://tn' → 'tn'"""
+        """Display prefix from base_url, e.g. 'http://atlas' → 'atlas'"""
         return self.base_url.split("//")[-1].rstrip("/")
 
     class Config:

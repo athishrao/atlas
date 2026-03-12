@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div id="app">
+
+    <!-- Header -->
+    <div class="header">
+      <div class="logo">
+        <span class="logo-icon">⌘</span>
+        <span class="logo-name">atlas</span>
+      </div>
+      <button id="toggleCreate" class="icon-btn" title="New link (N)">+</button>
+    </div>
+
+    <!-- Search view -->
+    <div id="searchView">
+      <div class="search-wrap">
+        <span class="search-icon">⌕</span>
+        <input id="searchInput" class="search-input" type="text"
+               placeholder="search or type a short name…" autocomplete="off" spellcheck="false">
+        <kbd class="kbd-hint" id="kbdHint">↵</kbd>
+      </div>
+
+      <div id="loadingState" class="state-msg">Loading links…</div>
+
+      <div id="emptyState" class="state-msg" hidden>
+        <div style="margin-bottom:8px">No match for "<span id="emptyQuery"></span>"</div>
+        <button id="createFromEmpty" class="hint-btn">+ Create this link</button>
+      </div>
+
+      <div id="resultsList" class="results-list" hidden></div>
+    </div>
+
+    <!-- Create view -->
+    <div id="createView" hidden>
+      <form id="createForm" class="create-form">
+        <div class="field">
+          <label>Short name</label>
+          <input id="newShort" type="text" placeholder="e.g. gh" autocomplete="off" spellcheck="false">
+        </div>
+        <div class="field">
+          <label>URL</label>
+          <input id="newUrl" type="url" placeholder="https://…" autocomplete="off">
+        </div>
+        <div class="field">
+          <label>Description <span class="opt">(optional)</span></label>
+          <input id="newDesc" type="text" placeholder="What is this?" autocomplete="off">
+        </div>
+        <div id="createError" class="error-msg" hidden></div>
+        <div class="form-footer">
+          <button type="submit" id="submitBtn" class="btn-primary">Create link →</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Status bar (flashes briefly on success/error) -->
+    <div id="statusBar" class="status-bar" hidden></div>
+
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

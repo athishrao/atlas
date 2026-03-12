@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Atlas — Settings</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0f0f0f;
+      color: #e5e5e5;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      font-size: 13px;
+      padding: 32px;
+      max-width: 500px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+    .logo-icon { font-size: 18px; color: #4ade80; }
+    .logo-name  { font-size: 16px; font-weight: 600; color: #ddd; }
+
+    .section-title {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #555;
+      margin-bottom: 12px;
+    }
+
+    .field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
+
+    label {
+      font-size: 11px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    input {
+      background: #1a1a1a;
+      border: 1px solid #2e2e2e;
+      border-radius: 6px;
+      color: #e5e5e5;
+      padding: 8px 10px;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.12s;
+      width: 100%;
+    }
+    input:focus { border-color: #4ade80; }
+
+    .hint {
+      font-size: 11px;
+      color: #444;
+      line-height: 1.5;
+    }
+
+    .divider { border: none; border-top: 1px solid #1e1e1e; margin: 20px 0; }
+
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 6px;
+    }
+
+    .btn-save {
+      background: #4ade80;
+      color: #0a0a0a;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.12s;
+    }
+    .btn-save:hover { opacity: 0.85; }
+
+    .btn-test {
+      background: none;
+      border: 1px solid #2e2e2e;
+      color: #aaa;
+      padding: 7px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+    .btn-test:hover { border-color: #4ade80; color: #4ade80; }
+
+    #testResult {
+      font-size: 12px;
+      transition: color 0.2s;
+    }
+    #testResult.ok  { color: #4ade80; }
+    #testResult.err { color: #f87171; }
+
+    #savedMsg {
+      font-size: 12px;
+      color: #4ade80;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    #savedMsg.show { opacity: 1; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <span class="logo-icon">⌘</span>
+    <span class="logo-name">Atlas Settings</span>
+  </div>
+
+  <div class="section-title">Instance</div>
+
+  <div class="field">
+    <label>Base URL</label>
+    <input id="baseUrl" type="url" placeholder="http://atlas">
+    <span class="hint">The address where your Atlas instance is running.</span>
+  </div>
+
+  <div class="field" style="margin-top:4px">
+    <div class="row">
+      <button class="btn-test" id="testBtn">Test connection</button>
+      <span id="testResult"></span>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section-title">Auth</div>
+
+  <div class="field">
+    <label>User email <span style="text-transform:none;font-style:italic;color:#3a3a3a;font-size:10px">(optional)</span></label>
+    <input id="userEmail" type="email" placeholder="you@company.com">
+    <span class="hint">
+      Only needed if Atlas is <em>not</em> behind a reverse proxy that injects
+      <code style="color:#666;font-size:11px">X-Forwarded-User</code>.<br>
+      Leave blank for the standard nginx setup.
+    </span>
+  </div>
+
+  <hr class="divider">
+
+  <div class="row">
+    <button class="btn-save" id="saveBtn">Save</button>
+    <span id="savedMsg">✓ Saved</span>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>

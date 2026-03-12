@@ -52,6 +52,45 @@ Atlas trusts the `X-Forwarded-User` header for user identity. In production, put
 
 Set `DEBUG=true` to skip auth entirely — suitable for a trusted internal network or local use.
 
+## Browser Extension (Chrome)
+
+The extension lets you search links and create new ones from any tab, without opening the Atlas UI. It also adds omnibox support so you can navigate by typing `go <shortname>` directly in the address bar.
+
+### Install
+
+1. Open `chrome://extensions`
+2. Enable **Developer mode** (toggle, top-right)
+3. Click **Load unpacked** → select the `extension/` folder in this repo
+4. Pin the Atlas icon to your toolbar
+
+### First-time setup
+
+Right-click the extension icon → **Options**:
+
+- **Base URL** — set to your Atlas address (default `http://atlas`). Click **Test connection** to verify.
+- **User email** — only needed if Atlas is _not_ behind a proxy that injects `X-Forwarded-User`. Leave blank for the standard nginx setup.
+
+### Using the popup
+
+Click the ⌘ icon in the toolbar:
+
+- **Search** — type to filter all links instantly. Press `↑ ↓` to navigate, `Enter` to open.
+- **Open** — click any row, or press `Enter` on an exact short name match.
+- **Copy** — click `⎘` on any row to copy the full short URL to clipboard.
+- **Create** — click `+` (or press `N`). The current tab's URL is pre-filled. Submit creates the link immediately via the API.
+- If no match is found, a **Create this link** shortcut appears pre-filled with your search query.
+
+### Omnibox
+
+In your browser omnibox, type `go` and then hit `tab` to enter Atlas search mode.
+
+```
+go standup        → navigates to atlas/standup
+go dep            → shows autocomplete suggestions matching "dep"
+```
+
+Press `Enter` to open in the current tab, or `Alt+Enter` for a new tab.
+
 ## Development
 
 ```bash

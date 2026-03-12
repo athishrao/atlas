@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "Atlas",
+  "version": "1.0.0",
+  "description": "Quick access to your Atlas link shortener — search, navigate, and create short links from any tab.",
+
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/16.png",
+      "48": "icons/48.png",
+      "128": "icons/128.png"
+    },
+    "default_title": "Atlas"
+  },
+
+  "background": {
+    "service_worker": "background.js"
+  },
+
+  "omnibox": {
+    "keyword": "go"
+  },
+
+  "options_page": "options.html",
+
+  "permissions": ["tabs", "storage"],
+
+  "host_permissions": ["http://*/*", "https://*/*"]
+}
