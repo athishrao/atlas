@@ -5,7 +5,7 @@
   <h1>Edit tn/{{ link.short }}</h1>
   <form method="post" action="/edit/{{ link.short }}">
     <label>Destination URL
-      <input name="url" type="url" value="{{ link.url }}" required>
+      <input name="url" type="text" value="{{ link.url }}" required>
     </label>
     <label>Description
       <input name="description" value="{{ link.description }}">
